@@ -7,7 +7,7 @@ export default {
       http: {
         method: 'get',
         path: 'cars',
-        cors: true,
+        cors: false,
       },
     },
   ],
