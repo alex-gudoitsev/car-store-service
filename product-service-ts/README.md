@@ -1,3 +1,15 @@
+5c6ebcfc-4dfd-11ed-bdc3-0242ac120002
+5c6ec0a8-4dfd-11ed-bdc3-0242ac120002
+5c6ec288-4dfd-11ed-bdc3-0242ac120002
+
+aws dynamodb put-item --table-name products --item '{ "id": { "S": "5c6ebcfc-4dfd-11ed-bdc3-0242ac120002"}, "title": { "S": "BMW i3"}, "description": { "S": "No description"}, "price": { "N": "13302"}}'
+aws dynamodb put-item --table-name products --item '{ "id": { "S": "5c6ec0a8-4dfd-11ed-bdc3-0242ac120002"}, "title": { "S": "BMW i4"}, "description": { "S": "No description"}, "price": { "N": "3000"}}'
+aws dynamodb put-item --table-name products --item '{ "id": { "S": "5c6ec288-4dfd-11ed-bdc3-0242ac120002"}, "title": { "S": "BMW i5"}, "description": { "S": "No description"}, "price": { "N": "1000"}}'
+
+aws dynamodb put-item --table-name stocks --item '{ "product_id": { "S": "5c6ebcfc-4dfd-11ed-bdc3-0242ac120002"}, "count": { "N": "100"}}'
+aws dynamodb put-item --table-name stocks --item '{ "product_id": { "S": "5c6ec0a8-4dfd-11ed-bdc3-0242ac120002"}, "count": { "N": "50"}}'
+aws dynamodb put-item --table-name stocks --item '{ "product_id": { "S": "5c6ec288-4dfd-11ed-bdc3-0242ac120002"}, "count": { "N": "0"}}'
+
 # Serverless - AWS Node.js Typescript
 
 This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
