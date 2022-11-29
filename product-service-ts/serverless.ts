@@ -1,6 +1,6 @@
 import cars from '@functions/cars';
 import carsId from '@functions/carsId';
-import { createCar } from '@functions/index';
+import { catalogBatchProcess, createCar } from '@functions/index';
 import type { AWS } from '@serverless/typescript';
 
 const serverlessConfiguration: AWS = {
@@ -18,43 +18,64 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      CREATE_PRODUCT_TOPIC_ARN: { Ref: 'createProductTopic' },
     },
-    // iamRoleStatements: [
-    //   {
-    //     Effect: 'Allow',
-    //     Action: 'dynamodb:Scan',
-    //     Resource: { 'Fn::GetAtt': ['ProductsTable', 'Arn'] },
-    //   },
-    //   {
-    //     Effect: 'Allow',
-    //     Action: 'dynamodb:Query',
-    //     Resource: { 'Fn::GetAtt': ['ProductsTable', 'Arn'] },
-    //   },
-    //   {
-    //     Effect: 'Allow',
-    //     Action: 'dynamodb:PutItem',
-    //     Resource: { 'Fn::GetAtt': ['ProductsTable', 'Arn'] },
-    //   },
-    //   {
-    //     Effect: 'Allow',
-    //     Action: 'dynamodb:Scan',
-    //     Resource: { 'Fn::GetAtt': ['StocksTable', 'Arn'] },
-    //   },
-    //   {
-    //     Effect: 'Allow',
-    //     Action: 'dynamodb:Query',
-    //     Resource: { 'Fn::GetAtt': ['StocksTable', 'Arn'] },
-    //   },
-    //   {
-    //     Effect: 'Allow',
-    //     Action: 'dynamodb:PutItem',
-    //     Resource: { 'Fn::GetAtt': ['StocksTable', 'Arn'] },
-    //   },
-    // ],
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: ['sqs:*'],
+            Resource: [
+              'arn:aws:sqs:us-east-1:355730231044:sqsCreateProductQueue2',
+            ],
+          },
+          {
+            Effect: 'Allow',
+            Action: ['sns:*'],
+            Resource: {
+              Ref: 'createProductTopic',
+            },
+          },
+          {
+            Effect: 'Allow',
+            Action: 'dynamodb:*',
+            Resource: { 'Fn::GetAtt': ['ProductsTable', 'Arn'] },
+          },
+          {
+            Effect: 'Allow',
+            Action: 'dynamodb:*',
+            Resource: { 'Fn::GetAtt': ['StocksTable', 'Arn'] },
+          },
+        ],
+      },
+    },
   },
-  functions: { cars, carsId, createCar },
+  functions: { cars, carsId, createCar, catalogBatchProcess },
   resources: {
     Resources: {
+      sqsCreateProductQueue2: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'sqsCreateProductQueue2',
+        },
+      },
+      createProductTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'createProductTopic',
+        },
+      },
+      createProductSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          TopicArn: {
+            Ref: 'createProductTopic',
+          },
+          Endpoint: 'alex.gudoitsev@gmail.com',
+          Protocol: 'email',
+        },
+      },
       ProductsTable: {
         Type: 'AWS::DynamoDB::Table',
         Properties: {

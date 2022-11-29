@@ -8,7 +8,3 @@ export interface IStock {
   product_id: string;
   count: number;
 }
-
-export interface IProduct extends ICar {
-  count: number;
-}
