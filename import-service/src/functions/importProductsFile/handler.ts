@@ -1,5 +1,6 @@
 import {
   formatErrorJSONResponse,
+  formatJSONResponse,
   ValidatedEventAPIGatewayProxyEvent,
 } from '@libs/api-gateway';
 import { middyfy } from '@libs/lambda';
@@ -27,15 +28,8 @@ const importProductsFile: ValidatedEventAPIGatewayProxyEvent<
 
     const url = await s3.getSignedUrl('putObject', params);
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Access-Control-Allow-Headers': '*',
-        'Access-Control-Allow-Methods': '*',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: url,
-    };
+    console.log('url', url);
+    return formatJSONResponse(url);
   } catch (e) {
     return formatErrorJSONResponse(e, 500);
   }
