@@ -3,50 +3,37 @@ import {
   ValidatedEventAPIGatewayProxyEvent,
 } from '@libs/api-gateway';
 import middy from '@middy/core';
-const csv = require('csv-parser');
 import * as AWS from 'aws-sdk';
-const BUCKET = 'car-csv-bucket';
+import { QUEUE_MESSAGE } from 'src/constants';
+import FileService from 'src/services/FileService/FileService';
 
-const readFile = async (s3, params) => {
-  const s3Stream = s3.getObject(params).createReadStream();
-  await s3Stream
-    .pipe(csv())
-    .on('data', (chunk) => {
-      console.log('data: ', chunk);
-    })
-    .on('error', (error) => {
-      console.log(error);
-    })
-    .on('end', () => {
-      console.log('end');
-    });
-};
 const importFileParser: ValidatedEventAPIGatewayProxyEvent<void> = async (
   event: any
 ) => {
   console.log('start importFileParser: ');
 
-  console.log('Start parsing: ', event);
-  const s3 = new AWS.S3({ region: 'us-east-1' });
-  console.log('Lambda importFileParser is invoked! Event: ', event);
-
   try {
     const csvKey = event.Records[0].s3.object.key;
-    const [, fileName] = csvKey.split('/');
-    const newPrefix = 'parsed';
+    const parsedList = await FileService.parseFile(csvKey);
 
-    const params = { Bucket: BUCKET, Key: csvKey };
-    const paramsToWrite = {
-      Bucket: BUCKET,
-      CopySource: `${BUCKET}/${csvKey}`,
-      Key: `${newPrefix}/${fileName}`,
-    };
+    if (!parsedList.length) return;
 
-    await readFile(s3, params);
+    const sqs = new AWS.SQS();
 
-    await s3.copyObject(paramsToWrite).promise();
+    for (const item of parsedList) {
+      try {
+        const result = await sqs
+          .sendMessage({
+            QueueUrl: process.env.SQS_URL,
+            MessageBody: JSON.stringify(item),
+          })
+          .promise();
 
-    await s3.deleteObject(params).promise();
+        console.log(QUEUE_MESSAGE.QUEUE_SUCCESS, item.title, result);
+      } catch (error) {
+        console.error(QUEUE_MESSAGE.ERROR, item.title, error);
+      }
+    }
   } catch (e) {
     return formatErrorJSONResponse('Bad Request', 400);
   }

@@ -17,19 +17,29 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      SQS_URL:
+        'https://sqs.us-east-1.amazonaws.com/355730231044/sqsCreateProductQueue2',
     },
+
     iam: {
       role: {
         statements: [
           {
             Effect: 'Allow',
-            Action: 's3:ListBucket', // allow watch all bucket
+            Action: 's3:ListBucket',
             Resource: 'arn:aws:s3:::car-csv-bucket',
           },
           {
             Effect: 'Allow',
             Action: 's3:*',
-            Resource: 'arn:aws:s3:::car-csv-bucket/*', // * - all operation PUT/GET/POST and etc
+            Resource: 'arn:aws:s3:::car-csv-bucket/*',
+          },
+          {
+            Effect: 'Allow',
+            Action: ['sqs:*'],
+            Resource: [
+              'arn:aws:sqs:us-east-1:355730231044:sqsCreateProductQueue2',
+            ],
           },
         ],
       },

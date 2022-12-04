@@ -1,5 +1,4 @@
 import { ICar, IStock } from 'src/types';
-import { v4 } from 'uuid';
 import { dynamo } from './initData';
 
 class StocksService {
