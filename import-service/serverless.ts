@@ -1,5 +1,5 @@
-import { importFileParser, importProductsFile } from '@functions/index';
 import type { AWS } from '@serverless/typescript';
+import { importFileParser, importProductsFile } from './src/functions';
 
 const serverlessConfiguration: AWS = {
   service: 'car-csv-bucket',
@@ -8,7 +8,6 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
-    stage: 'dev',
     region: 'us-east-1',
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -58,6 +57,23 @@ const serverlessConfiguration: AWS = {
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
+    },
+  },
+  resources: {
+    Resources: {
+      GatewayResponseDefault4XX: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'",
+          },
+          ResponseType: 'DEFAULT_4XX',
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi',
+          },
+        },
+      },
     },
   },
 };

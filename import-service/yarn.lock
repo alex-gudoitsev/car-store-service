@@ -254,10 +254,10 @@
   "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.186.tgz"
   "version" "4.14.186"
 
-"@types/node@*", "@types/node@^14.18.33":
-  "integrity" "sha512-qelS/Ra6sacc4loe/3MSjXNL1dNQ/GjxNHVzuChwMfmk7HuycRLVQN2qNY3XahK+fZc5E2szqQSKUyAF0E+2bg=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-14.18.33.tgz"
-  "version" "14.18.33"
+"@types/node@*", "@types/node@^14.18.34":
+  "integrity" "sha512-hcU9AIQVHmPnmjRK+XUUYlILlr9pQrsqSrwov/JK1pnf3GTQowVBhx54FbvM0AU/VXGH4i3+vgXS5EguR7fysA=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-14.18.34.tgz"
+  "version" "14.18.34"
 
 "@types/responselike@*", "@types/responselike@^1.0.0":
   "integrity" "sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA=="
